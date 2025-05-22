@@ -1,127 +1,104 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() => runApp(CountryFlagApp());
+
+class CountryFlagApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Country Flags',
+      debugShowCheckedModeBanner: false,
+      home: CountryFlagScreen(),
+    );
+  }
 }
 
 class Country {
   final String name;
-  final String code;
+  final String imageUrl;
 
-  const Country({required this.name, required this.code});
+  Country({required this.name, required this.imageUrl});
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Responsive Country Flags',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const FlagGridPage(),
-    );
-  }
-}
-
-class FlagGridPage extends StatelessWidget {
-  const FlagGridPage({super.key});
-
-  final List<Country> countries = const [
-    Country(name: 'United States', code: 'us'),
-    Country(name: 'India', code: 'in'),
-    Country(name: 'Germany', code: 'de'),
-    Country(name: 'Italy', code: 'it'),
-    Country(name: 'Japan', code: 'jp'),
-    Country(name: 'Canada', code: 'ca'),
-    Country(name: 'France', code: 'fr'),
-    Country(name: 'Brazil', code: 'br'),
-    Country(name: 'United Kingdom', code: 'gb'),
-    Country(name: 'China', code: 'cn'),
-    Country(name: 'South Korea', code: 'kr'),
-    Country(name: 'Spain', code: 'es'),
-    Country(name: 'Australia', code: 'au'),
-    Country(name: 'Mexico', code: 'mx'),
-    Country(name: 'Russia', code: 'ru'),
-    Country(name: 'Bangladesh', code: 'bd'),
+class CountryFlagScreen extends StatelessWidget {
+  final List<Country> countries = [
+    Country(name: 'Bangladesh', imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Flag_of_Bangladesh.svg/320px-Flag_of_Bangladesh.svg.png'),
+    Country(name: 'USA', imageUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/320px-Flag_of_the_United_States.svg.png'),
+    Country(name: 'UK', imageUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Flag_of_the_United_Kingdom.svg/320px-Flag_of_the_United_Kingdom.svg.png'),
+    Country(name: 'Canada', imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Flag_of_Canada.svg/320px-Flag_of_Canada.svg.png'),
+    Country(name: 'Germany', imageUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/b/ba/Flag_of_Germany.svg/320px-Flag_of_Germany.svg.png'),
+    Country(name: 'France', imageUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c3/Flag_of_France.svg/320px-Flag_of_France.svg.png'),
+    Country(name: 'Switzerland', imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Flag_of_Switzerland.svg/320px-Flag_of_Switzerland.svg.png'),
+    Country(name: 'India', imageUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/4/41/Flag_of_India.svg/320px-Flag_of_India.svg.png'),
+    Country(name: 'Japan', imageUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Flag_of_Japan.svg/320px-Flag_of_Japan.svg.png'),
+    Country(name: 'Australia', imageUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/b/b9/Flag_of_Australia.svg/320px-Flag_of_Australia.svg.png'),
+    Country(name: 'Brazil', imageUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/0/05/Flag_of_Brazil.svg/320px-Flag_of_Brazil.svg.png'),
+    Country(name: 'China', imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/320px-Flag_of_the_People%27s_Republic_of_China.svg.png'),
   ];
 
+  int getCrossAxisCount(double width) {
+    if (width < 600) return 2; // Mobile
+    if (width < 900) return 3; // Tablet
+    return 4; // Desktop
+  }
+
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    int crossAxisCount;
-    if (screenWidth < 600) {
-      crossAxisCount = 2; // Mobile
-    } else if (screenWidth < 1024) {
-      crossAxisCount = 3; // Tablet
-    } else {
-      crossAxisCount = 4; // Desktop
-    }
+    final double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Country Flag Cards'),
+        title: Text('Country Flags'),
+        backgroundColor: Colors.teal,
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
+      body: Padding(
         padding: const EdgeInsets.all(12.0),
-        child: Center(
-          child: Wrap(
-            spacing: 16,
-            runSpacing: 16,
-            children: countries.map((country) {
-              return SizedBox(
-                width: screenWidth / crossAxisCount - 24,
-                child: CountryCard(country: country),
-              );
-            }).toList(),
+        child: GridView.builder(
+          itemCount: countries.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: getCrossAxisCount(screenWidth),
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: 3 / 4,
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class CountryCard extends StatelessWidget {
-  final Country country;
-
-  const CountryCard({super.key, required this.country});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 6,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          ClipRRect(
-            borderRadius:
-            const BorderRadius.vertical(top: Radius.circular(12)),
-            child: Image.network(
-              'https://flagcdn.com/w320/${country.code}.png',
-              height: 120,
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => const Icon(Icons.flag),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Text(
-              country.name,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+          itemBuilder: (context, index) {
+            final country = countries[index];
+            return Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
-              textAlign: TextAlign.center,
-            ),
-          )
-        ],
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                      child: Image.network(
+                        country.imageUrl,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        errorBuilder: (context, error, stackTrace) =>
+                            Center(child: Icon(Icons.flag, size: 40, color: Colors.grey)),
+                        loadingBuilder: (context, child, progress) {
+                          if (progress == null) return child;
+                          return Center(child: CircularProgressIndicator());
+                        },
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      country.name,
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
