@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(CountryFlagApp());
+void main() {
+  runApp(CountryFlagApp());
+}
 
 class CountryFlagApp extends StatelessWidget {
   @override
